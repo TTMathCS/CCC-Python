@@ -1,33 +1,17 @@
-r = int(input())
-c = int(input())
-m = []
-for _ in range(r):
-    m.append(list(input()))
+r, c = int(input()), int(input())
+m = [list(input()) for _ in range(r)]
+i, j = int(input()), int(input())
 
-i = int(input())
-j = int(input())
-
-total = 0
-q = [(i, j)]
-visited = set()
+q, visited, total = [(i, j)], set(), 0
+values = {'S': 1, 'M': 5, 'L': 10}
 
 while q:
     x, y = q.pop(0)
-    if (x, y) in visited or x < 0 or x >= r or y < 0 or y >= c or m[x][y] == '*' or m[x][y] == '-':
+    if (x, y) in visited or not (0 <= x < r and 0 <= y < c) or m[x][y] in {'*', '-'}:
         continue
-
     visited.add((x, y))
-
-    if m[x][y] == 'S':
-        total += 1
-    elif m[x][y] == 'M':
-        total += 5
-    elif m[x][y] == 'L':
-        total += 10
-
-    m[x][y] = '-'  # mark as visited
-
-    for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
-        q.append((x + dx, y + dy))
+    total += values.get(m[x][y], 0)
+    m[x][y] = '-'
+    q += [(x + dx, y + dy) for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]]
 
 print(total)
