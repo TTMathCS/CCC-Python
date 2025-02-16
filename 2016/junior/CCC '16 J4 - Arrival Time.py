@@ -1,39 +1,54 @@
-## https://dmoj.ca/problem/ccc16j4
-# solution 1 is brute force, list all possibility in a dictonary
+def solve():
+    def t2m(t):
+        # Convert time from HH:MM format to minutes since midnight (00:00)
+        # Example: "7:30" -> 7*60 + 30 = 450 minutes
+        return sum(int(x) * y for x, y in zip(t.split(':'), [60, 1]))
 
-def time_to_minutes(t) -> int:
-    # t is HH:MM format
-    h, m = map(int, t.split(":"))
-    return h * 60 + m
+    def m2t(m):
+        # Convert minutes since midnight back to HH:MM format
+        # Example: 450 -> "07:30"
+        # Uses % 24 to handle times past midnight and :02d for padding with zeros
+        return f"{m // 60 % 24:02d}:{m % 60:02d}"
+
+    # Read departure time from input
+    m = t2m(input())
+
+    # If not during rush hours (5:00-10:00 or 13:00-19:00), simply add 2 hours (120 minutes)
+    if not (300 < m < 600 or 780 < m < 1140):
+        print(m2t(m + 120))
+        return
+
+    # Rush Hour Details:
+    # Morning rush: 5:00-10:00 (300-600 minutes)
+    # Evening rush: 13:00-19:00 (780-1140 minutes)
+    # Peak periods:
+    # - Morning peak: 7:00-9:00 (420-540 minutes) - worst case adds 3 hours
+    # - Evening peak: 15:00-17:00 (900-1020 minutes) - worst case adds 4 hours
+
+    # Handle morning rush hour (5:00-10:00)
+    if 300 < m < 600:
+        if m < 420:  # Before morning peak
+            pre = max(0, 420 - m)  # Normal travel time before peak
+            rush = min((120 - pre) * 2, 180)  # Double time during peak period
+            post = 120 - pre - rush // 2  # Normal travel time after peak
+            m += pre + rush + post
+        else:  # During or after morning peak
+            # Calculate remaining time considering already spent time in peak
+            m = 600 + 120 - (180 - (m - 420)) // 2
+
+    # Handle evening rush hour (13:00-19:00)
+    else:
+        if m < 900:  # Before evening peak
+            pre = max(0, 900 - m)  # Normal travel time before peak
+            rush = min((120 - pre) * 2, 240)  # Double time during peak period
+            post = 120 - pre - rush // 2  # Normal travel time after peak
+            m += pre + rush + post
+        else:  # During or after evening peak
+            # Calculate remaining time considering already spent time in peak
+            m = 1140 + 120 - (240 - (m - 900)) // 2
+
+    # Print final arrival time
+    print(m2t(m))
 
 
-def minutes_to_time(minutes) -> str:
-    # convert minutes back to "HH:MM" format
-    h = minutes // 60 % 24
-    m = minutes % 60
-    return f"{h:02}:{m:02}"
-
-
-minutes = time_to_minutes(input())
-
-# out of 5-10 and 13-19
-if not (300 < minutes < 600 or 780 < minutes < 1140):
-    minutes += 120
-elif 300 < minutes < 420:
-    mins_before_rush = max(0, 420 - minutes)
-    mins_during_rush = min((120 - mins_before_rush) * 2, 180)
-    mins_after_rush = 120 - mins_before_rush - mins_during_rush // 2
-    minutes += mins_before_rush + mins_during_rush + mins_after_rush
-elif 420 <= minutes < 600:
-    mins_after_rush = 120 - (180 - (minutes - 420)) // 2
-    minutes = 600 + mins_after_rush
-elif 780 < minutes < 900:
-    mins_before_rush = max(0, 900 - minutes)
-    mins_during_rush = min((120 - mins_before_rush) * 2, 240)
-    mins_after_rush = 120 - mins_before_rush - mins_during_rush // 2
-    minutes += mins_before_rush + mins_during_rush + mins_after_rush
-elif 900 <= minutes < 1140:
-    mins_after_rush = 120 - (240 - (minutes - 900)) // 2
-    minutes = 1140 + mins_after_rush
-
-print(minutes_to_time(minutes))
+solve()
