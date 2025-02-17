@@ -1,4 +1,4 @@
-### 2024 
+## 2024 
 
 ### Junior: https://dmoj.ca/contest/ccc24j
 1. [CCC '24 J1 - Conveyor Belt Sushi](https://dmoj.ca/problem/ccc24j1)

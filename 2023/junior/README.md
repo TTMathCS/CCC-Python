@@ -1,4 +1,4 @@
-### 2023
+## 2023
 
 ### Junior: https://dmoj.ca/contest/ccc23j
 1. [CCC '23 J1 - Deliv-e-droid](https://dmoj.ca/problem/ccc23j1)
